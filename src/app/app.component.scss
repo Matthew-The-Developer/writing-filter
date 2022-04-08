@@ -1,0 +1,37 @@
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  .file-input {
+    display: none;
+  }
+
+  .icon-button {
+    padding-right: 0.5rem;
+    mat-icon {
+      margin: 0 0 0 0.25rem;
+    }
+  }
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.content {
+  height: -webkit-calc(100% - 64px);
+}
+
+.mat-card {
+  margin: 1rem;
+  border: lightgray solid 1px;
+}
+
+.no-file {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  p {
+    color: lightgray;
+  }
+}

@@ -1,0 +1,123 @@
+<mat-toolbar color="primary">
+  <span>{{ title }}</span>
+
+  <span class="spacer"></span>
+
+  <input 
+    #fileUpload
+    (change)="fileSelected($event)"
+    type="file"
+    class="file-input"
+  >
+
+  <button
+    *ngIf="file"
+    (click)="fileUpload.click()"
+    matTooltip="Upload a File"
+    class="icon-button"
+    mat-button
+  >
+    {{ file.name }}
+    <mat-icon>file_upload</mat-icon>
+  </button>
+
+  <button
+    *ngIf="!file"
+    (click)="fileUpload.click()"
+    matTooltip="Upload a File"
+    mat-icon-button
+  >
+    <mat-icon>file_upload</mat-icon>
+  </button>
+
+  <button 
+    *ngIf="changes > 0"
+    matTooltip="Save"
+    class="icon-button"
+    mat-button
+  >
+    {{ changes }} Unsaved Changes
+    <mat-icon>save</mat-icon>
+  </button>
+
+  <button 
+    *ngIf="changes < 1"
+    [disabled]="!file || loading"
+    matTooltip="Save"
+    mat-icon-button
+  >
+    <mat-icon>save</mat-icon>
+  </button>
+
+  <button
+    [disabled]="!file || loading"
+    matTooltip="Export"
+    mat-icon-button
+  >
+    <mat-icon>file_download</mat-icon>
+  </button>
+</mat-toolbar>
+
+<ng-container *ngIf="file; else noFile">
+  <div class="content">
+    <mat-card
+      *ngFor="let post of (posts$ | async)"
+      class="mat-elevation-z0"
+    >
+      <mat-card-title-group>
+        <mat-card-title>{{ post.post_title }}</mat-card-title>
+        <mat-card-subtitle>{{ post.post_status }} - {{ post.post_date }}</mat-card-subtitle>
+        <button (click)="deletePost(post)" color="error" mat-icon-button>
+          <mat-icon>clear</mat-icon>
+        </button>
+      </mat-card-title-group>
+    
+      <mat-card-content>
+        <p>{{ post.post_content }}</p>
+      </mat-card-content>
+    </mat-card>
+    
+    <mat-card *ngIf="loading">
+      <mat-card-title>
+        <ngx-skeleton-loader 
+          count="1"
+          appearance="line"
+          animation="pulse"
+          [theme]="{
+            'height': '32px',
+            'width': '30%'
+          }"
+        ></ngx-skeleton-loader>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <ngx-skeleton-loader
+          count="1"
+          appearance="line"
+          animation="pulse"
+          [theme]="{
+            'height': '16px',
+            'width': '25%'
+          }"
+        ></ngx-skeleton-loader>
+      </mat-card-subtitle>
+    
+      <mat-card-content>
+        <ngx-skeleton-loader
+          count="6"
+          appearance="line"
+          animation="pulse"
+          [theme]="{
+            'height': '16px'
+          }"
+        ></ngx-skeleton-loader>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</ng-container>
+
+
+<ng-template #noFile>
+  <div class="content no-file">
+    <p>Click 'Upload a File' to start</p>
+  </div>
+</ng-template>
