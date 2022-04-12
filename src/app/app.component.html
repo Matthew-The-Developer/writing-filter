@@ -30,31 +30,26 @@
     <mat-icon>file_upload</mat-icon>
   </button>
 
-  <button 
-    *ngIf="changes > 0"
-    matTooltip="Save"
-    class="icon-button"
-    mat-button
-  >
-    {{ changes }} Unsaved Changes
-    <mat-icon>save</mat-icon>
-  </button>
-
-  <button 
-    *ngIf="changes < 1"
-    [disabled]="!file || loading"
-    matTooltip="Save"
-    mat-icon-button
-  >
-    <mat-icon>save</mat-icon>
-  </button>
-
   <button
-    [disabled]="!file || loading"
-    matTooltip="Export"
+    [disabled]="!file || !undoable"
+    matTooltip="Undo"
     mat-icon-button
   >
-    <mat-icon>file_download</mat-icon>
+    <mat-icon>undo</mat-icon>
+  </button>
+
+  <button 
+    [disabled]="!file || loading"
+    [matTooltip]="saveTip"
+    mat-icon-button
+  >
+    <mat-icon
+      [matBadge]="changes"
+      [matBadgeHidden]="changes < 1"
+      matBadgeColor="warn"
+    >
+      save
+    </mat-icon>
   </button>
 </mat-toolbar>
 
