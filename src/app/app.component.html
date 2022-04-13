@@ -31,11 +31,21 @@
   </button>
 
   <button
+    (click)="undo()"
     [disabled]="!file || !undoable"
     matTooltip="Undo"
     mat-icon-button
   >
     <mat-icon>undo</mat-icon>
+  </button>
+
+  <button
+    (click)="redo()"
+    [disabled]="!file || !redoable"
+    matTooltip="Redo"
+    mat-icon-button
+  >
+    <mat-icon>redo</mat-icon>
   </button>
 
   <button 

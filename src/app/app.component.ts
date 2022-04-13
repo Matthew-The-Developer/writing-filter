@@ -28,7 +28,14 @@ export class AppComponent {
   }
 
   get changes() {
-    return Math.abs(this._undo.getValue().length - this._posts.getValue().length);
+    const undos = this._undo.getValue();
+
+    if (undos.length > 0) {
+      const previous = undos[0];
+      return Math.abs(previous.length - this._posts.getValue().length);
+    } else {
+      return 0;
+    }
   }
 
   get undoable() {
@@ -43,12 +50,46 @@ export class AppComponent {
     return this.changes > 0 ? `${this.changes} Unsaved Changes` : 'Save';
   }
 
-  update(posts: Post[]) {
+  update(posts: Post[]): void {
     const undos = this._undo.getValue();
     undos.push(this._posts.getValue());
     this._undo.next(undos);
 
     this._posts.next(posts);
+    console.log(this._undo.getValue(), this._redo.getValue(), this._posts.getValue());
+  }
+
+  deletePost(deletedPost: Post): void {
+    const posts = this._posts.getValue().filter(post => post != deletedPost);
+    this.update(posts);
+  }
+
+  undo(): void {
+    const undos = this._undo.getValue();
+    const redos = this._redo.getValue();
+    const posts = this._posts.getValue();
+    const previous = undos.pop();
+    redos.push(posts);
+    this._undo.next(undos);
+    this._redo.next(redos);
+
+    this._posts.next(previous!!);
+
+    console.log(this._undo.getValue(), this._redo.getValue(), this._posts.getValue());
+  }
+
+  redo(): void {
+    const redos = this._redo.getValue();
+    const undos = this._undo.getValue();
+    const posts = this._posts.getValue();
+    const previous = redos.pop();
+    undos.push(posts);
+    this._redo.next(redos);
+    this._undo.next(undos);
+
+    this._posts.next(previous!!);
+
+    console.log(this._undo.getValue(), this._redo.getValue(), this._posts.getValue());
   }
 
   fileSelected(event: any) {
@@ -95,14 +136,5 @@ export class AppComponent {
     return posts
       .filter((value, index, self) => index === self.findIndex(post => post.post_content === value.post_content))
       .filter(post => post.post_content);
-  }
-
-  deletePost(post: Post): void {
-    const posts = this._posts.getValue();
-    const index = posts.indexOf(post, 0);
-    if (index > -1) {
-      posts.splice(index, 1);
-      this._posts.next(posts);
-    }
   }
 }
