@@ -1,5 +1,5 @@
 .mat-toolbar.mat-primary {
-  position: sticky;
+  position: fixed;
   top: 0;
   z-index: 1;
   .file-input {
@@ -20,6 +20,11 @@
 
 .content {
   height: -webkit-calc(100% - 64px);
+  width: 100%;
+  position: relative;
+  top: 64px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .mat-card {

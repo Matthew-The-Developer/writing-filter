@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { _closeDialogVia } from '@angular/material/dialog';
+import { MatDialog, _closeDialogVia } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject } from 'rxjs';
+import { SaveDialogComponent } from './dialogs/save-dialog/save-dialog.component';
 import { Post } from './models/post.model';
 
 @Component({
@@ -20,7 +21,8 @@ export class AppComponent {
   _redo = new BehaviorSubject<Post[][]>([]);
 
   constructor(
-    private snackbarService: MatSnackBar
+    private snackbarService: MatSnackBar,
+    private dialogService: MatDialog
   ) { }
 
   get posts$() {
@@ -56,12 +58,19 @@ export class AppComponent {
     this._undo.next(undos);
 
     this._posts.next(posts);
-    console.log(this._undo.getValue(), this._redo.getValue(), this._posts.getValue());
   }
 
   deletePost(deletedPost: Post): void {
     const posts = this._posts.getValue().filter(post => post != deletedPost);
     this.update(posts);
+
+    let snackbar = this.snackbarService.open(
+      `Deleted ${deletedPost.post_title} Post`,
+      'Undo',
+      { duration: 3000 }
+    );
+
+    snackbar.onAction().subscribe(() => this.undo());
   }
 
   undo(): void {
@@ -74,8 +83,6 @@ export class AppComponent {
     this._redo.next(redos);
 
     this._posts.next(previous!!);
-
-    console.log(this._undo.getValue(), this._redo.getValue(), this._posts.getValue());
   }
 
   redo(): void {
@@ -88,12 +95,23 @@ export class AppComponent {
     this._undo.next(undos);
 
     this._posts.next(previous!!);
+  }
 
-    console.log(this._undo.getValue(), this._redo.getValue(), this._posts.getValue());
+  save(): void {
+    this.dialogService.open(SaveDialogComponent, {
+      width: '500px',
+      data: {
+        posts: this._posts.getValue()
+      }
+    });
   }
 
   fileSelected(event: any) {
     if (event.target.files[0]) {
+      this._posts.next([]);
+      this._undo.next([]);
+      this._redo.next([]);
+
       this.loading = true;
       this.file = event.target.files[0];
       const fileReader = new FileReader();
@@ -108,11 +126,13 @@ export class AppComponent {
           this.update(this.scrubPosts(posts));
 
           if (this.changes > 0) {
-            this.snackbarService.open(
+            let snackbar = this.snackbarService.open(
               `${this.changes} Duplicate & Empty Posts Removed`,
-              'Dismiss',
-              { duration: 4000 }
+              'Undo',
+              { duration: 3000 }
             );
+
+            snackbar.onAction().subscribe(() => this.undo());
           }
         }
       }

@@ -48,7 +48,8 @@
     <mat-icon>redo</mat-icon>
   </button>
 
-  <button 
+  <button
+    (click)="save()"
     [disabled]="!file || loading"
     [matTooltip]="saveTip"
     mat-icon-button
@@ -88,10 +89,7 @@
           count="1"
           appearance="line"
           animation="pulse"
-          [theme]="{
-            'height': '32px',
-            'width': '30%'
-          }"
+          [theme]="{ 'height': '32px', 'width': '30%' }"
         ></ngx-skeleton-loader>
       </mat-card-title>
       <mat-card-subtitle>
@@ -99,10 +97,7 @@
           count="1"
           appearance="line"
           animation="pulse"
-          [theme]="{
-            'height': '16px',
-            'width': '25%'
-          }"
+          [theme]="{ 'height': '16px', 'width': '25%' }"
         ></ngx-skeleton-loader>
       </mat-card-subtitle>
     
@@ -111,9 +106,7 @@
           count="6"
           appearance="line"
           animation="pulse"
-          [theme]="{
-            'height': '16px'
-          }"
+          [theme]="{ 'height': '16px' }"
         ></ngx-skeleton-loader>
       </mat-card-content>
     </mat-card>
